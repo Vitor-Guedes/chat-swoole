@@ -1,6 +1,8 @@
 services:
   swoole:
     build: .
+    volumes:
+      - "./app:/app"
     ports: 
       - 9501:9501
     networks:

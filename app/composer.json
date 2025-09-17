@@ -1,0 +1,14 @@
+{
+    "name": "phpswoole/chat-app",
+    "authors": [
+        {
+            "name": "Vitor Guedes",
+            "email": "vtrf2.0@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Chat\\": "src/"
+        }
+    }
+}

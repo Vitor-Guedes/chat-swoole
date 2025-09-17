@@ -1,23 +1,34 @@
-FROM php:8.2-cli
+# Use a base image with PHP CLI
+FROM php:8.2-cli-alpine
 
-RUN apt-get update && apt-get install vim -y && \
-    apt-get install openssl -y && \
-    apt-get install libssl-dev -y && \
-    apt-get install wget -y && \
-    apt-get install procps -y && \
-    apt-get install htop -y
+# Install system dependencies required for Swoole and other extensions
+RUN apk add --no-cache \
+    git \
+    make \
+    autoconf \
+    g++ \
+    openssl-dev \
+    php82-dev \
+    php82-pear \
+    brotli-dev
 
-# Install Swoole
-RUN pecl install swoole && docker-php-ext-enable swoole
+# Install the Swoole extension via PECL
+RUN pecl install openswoole \
+    && docker-php-ext-enable openswoole
 
-# Install Redis extension
-RUN pecl install redis && docker-php-ext-enable redis
-
-# Composer and install
-COPY --from=composer:2.1.9 /usr/bin/composer /usr/bin/composer
-
-WORKDIR /var/www/html
+# Copy your application code into the container
+WORKDIR /app
 
 COPY ./app .
 
-CMD ["php", "/var/www/html/server.php"]
+# Install Composer dependencies (if your project uses Composer)
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+RUN composer install --no-dev --optimize-autoloader
+
+# Expose the port your Swoole server will listen on
+EXPOSE 9501
+
+# Define the command to run your Swoole application
+# CMD ["php", "server.php"]
+CMD ["tail", "-f", "/dev/null"]
