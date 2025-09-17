@@ -1,0 +1,16 @@
+services:
+  swoole:
+    build: .
+    ports: 
+      - 9501:9501
+    networks:
+      - swoole-network
+  redis:
+    image: redis:alpine
+    ports:
+     - 6379:6379
+    networks:
+      - swoole-network
+networks:
+  swoole-network:
+    driver: bridge
